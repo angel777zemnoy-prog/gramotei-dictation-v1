@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏙️ Грамотеи Живой Вселенной (V-FINAL-STABLE)</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #fdf6e3; color: #657b83; padding: 20px; }
+        .container { background: #eee8d5; border: 4px solid #93a1a1; padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 600px; margin: auto; }
+        h1 { color: #b58900; margin-bottom: 5px; font-size: 1.8em; }
+        .preamble { text-align: left; background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 15px; font-size: 0.95em; border-left: 5px solid #268bd2; line-height: 1.4; font-style: italic; color: #073642; }
+        #word-display { font-size: 2.5em; font-weight: bold; color: #dc322f; margin: 20px 0; min-height: 1.5em; display: flex; align-items: center; justify-content: center; }
+        button { border: none; padding: 12px 20px; font-size: 1.1em; border-radius: 10px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; }
+        #unlock-btn { background: #dc322f; padding: 15px 30px; font-size: 1.3em; width: 100%; border-bottom: 5px solid #9d2320; margin-bottom: 20px; display: block; }
+        #ui { display: none; }
+        #start-btn { background: #859900; }
+        #res { display: none; background: white; margin-top: 20px; padding: 15px; border-radius: 10px; text-align: left; border: 2px solid #859900; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏙️ Грамотеи Живой Вселенной</h1>
+        <div class="preamble">Дорогие одноклассники, родители, бабушки и дедушки! У нас в классе за диктант оказалось ВСЕГО одна \"5!!\", НО МЫ!! — хорошие!! грамотные!! только немного энергичные и много отвлекаемся!!! Нам нужна помощь в тренировке и как дети современного мира цифры мы с большой радостью и эффективностью освоим все предметы с АИ репетиторами!! Сегодня мы с бабушкой сделали тренажер и с радостью делюсь — давайте перепишем диктант всем классом на \"5\"!!!</div>
+        <button id="unlock-btn" onclick="activateVoice()">🔊 ВКЛЮЧИТЬ ЖИВОЙ ГОЛОС</button>
+        <div id="ui">
+            <div id="word-display">ГОТОВ К РАБОТЕ</div>
+            <button id="start-btn" onclick="startDictation()">НАЧАТЬ ДИКТАНТ</button>
+            <div style="margin-top:15px;">Интервал: <input type="number" id="gap" value="15" style="width:50px; font-size: 1em;"> сек.</div>
+            <div id="res">
+                <h3>Проверь себя!</h3>
+                <ol id="final-list" style="columns: 2; list-style-position: inside;"></ol>
+                <button onclick="location.reload()" style="background:#268bd2; width:100%; margin-top:10px;">ЗАНОВО</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const vocab = [{"display": "Алфавит", "speech": "алфавИт"}, {"display": "Апрель", "speech": "апрЕль"}, {"display": "Багаж", "speech": "багАж"}, {"display": "Берёза", "speech": "берЁза"}, {"display": "Быстро", "speech": "бЫстро"}, {"display": "Вагон", "speech": "вагОн"}, {"display": "Варежки", "speech": "вАрежки"}, {"display": "Вдруг", "speech": "вдрУг"}, {"display": "Весело", "speech": "вЕсело"}, {"display": "Ветер", "speech": "вЕтер"}, {"display": "Воробей", "speech": "воробЕй"}, {"display": "Ворона", "speech": "ворОна"}, {"display": "Воротник", "speech": "воротнИк"}, {"display": "Город", "speech": "гОрод"}, {"display": "Группа", "speech": "грУппа"}, {"display": "Двор", "speech": "двОр"}, {"display": "Девочка", "speech": "дЕвочка"}, {"display": "Дежурный", "speech": "Дежурный"}, {"display": "Декабрь", "speech": "декАбрь"}, {"display": "Диван", "speech": "дивАн"}, {"display": "Директор", "speech": "дирЕктор"}, {"display": "До свидания", "speech": "до свидАния"}, {"display": "Дорога", "speech": "дорОга"}, {"display": "Жёлтый", "speech": "жЁлтый"}, {"display": "Завод", "speech": "завОд"}, {"display": "Заяц", "speech": "зАяц"}, {"display": "Здравствуй", "speech": "здрАвствуй"}, {"display": "Здравствуйте", "speech": "здрАвствуйте"}, {"display": "Земляника", "speech": "землянИка"}, {"display": "Извините", "speech": "извинИте"}, {"display": "Иней", "speech": "Иней"}, {"display": "Капуста", "speech": "капУста"}, {"display": "Карандаш", "speech": "карандАш"}, {"display": "Картина", "speech": "картИна"}, {"display": "Квитанция", "speech": "квитАнция"}, {"display": "Класс", "speech": "клАсс"}, {"display": "Коньки", "speech": "конькИ"}, {"display": "Корзина", "speech": "корзИна"}, {"display": "Корова", "speech": "корОва"}, {"display": "Лопата", "speech": "лопАта"}, {"display": "Лягушка", "speech": "лягУшка"}, {"display": "Магазин", "speech": "магазИн"}, {"display": "Малина", "speech": "малИна"}, {"display": "Мальчик", "speech": "мАльчик"}, {"display": "Машина", "speech": "машИна"}, {"display": "Мебель", "speech": "мЕбель"}, {"display": "Месяц", "speech": "мЕсяц"}, {"display": "Метель", "speech": "метЕль"}, {"display": "Метро", "speech": "метрО"}, {"display": "Молоко", "speech": "молокО"}, {"display": "Молоток", "speech": "молотОк"}, {"display": "Морковь", "speech": "моркОвь"}, {"display": "Мороз", "speech": "морОз"}, {"display": "Народ", "speech": "нарОд"}, {"display": "Ноябрь", "speech": "ноЯбрь"}, {"display": "Обед", "speech": "обЕд"}, {"display": "Обезьяна", "speech": "обезьЯна"}, {"display": "Облако", "speech": "Облако"}, {"display": "Одежда", "speech": "одЕжда"}, {"display": "Октябрь", "speech": "октЯбрь"}, {"display": "Осина", "speech": "осИна"}, {"display": "Отец", "speech": "отЕц"}, {"display": "Пальто", "speech": "пальтО"}, {"display": "Пассажир", "speech": "пассажИр"}, {"display": "Пассажирский", "speech": "пассажИрский"}, {"display": "Пенал", "speech": "пенАл"}, {"display": "Перрон", "speech": "перрОн"}, {"display": "Петух", "speech": "петУх"}, {"display": "Платок", "speech": "платОк"}, {"display": "Пожалуйста", "speech": "пожАлуйста"}, {"display": "Помощь", "speech": "пОмощь"}, {"display": "Посуда", "speech": "посУда"}, {"display": "Прощай", "speech": "прощАй"}, {"display": "Путешественник", "speech": "путешЕственник"}, {"display": "Работа", "speech": "рабОта"}, {"display": "Рабочий", "speech": "рабОчий"}, {"display": "Ребята", "speech": "ребЯта"}, {"display": "Рисунок", "speech": "рисУнок"}, {"display": "Рядом", "speech": "рЯдом"}, {"display": "Саквояж", "speech": "саквоЯж"}, {"display": "Сапоги", "speech": "сапогИ"}, {"display": "Сахар", "speech": "сАхар"}, {"display": "Сентябрь", "speech": "сентЯбрь"}, {"display": "Скоро", "speech": "скОро"}, {"display": "Словарь", "speech": "словАрь"}, {"display": "Снегирь", "speech": "снегИрь"}, {"display": "Солнце", "speech": "сОлнце"}, {"display": "Сорока", "speech": "сорОка"}, {"display": "Спасибо", "speech": "спасИбо"}, {"display": "Стакан", "speech": "стакАн"}, {"display": "Суббота", "speech": "суббОта"}, {"display": "Суффикс", "speech": "сУффикс"}, {"display": "Тарелка", "speech": "тарЕлка"}, {"display": "Тетрадь", "speech": "тетрАдь"}, {"display": "Товарищ", "speech": "товАрищ"}, {"display": "Топор", "speech": "топОр"}, {"display": "Улица", "speech": "Улица"}, {"display": "Урожай", "speech": "урожАй"}, {"display": "Участвовать", "speech": "учАствовать"}, {"display": "Ученик", "speech": "ученИк"}, {"display": "Учитель", "speech": "учИтель"}, {"display": "Учительница", "speech": "учИтельница"}, {"display": "Фамилия", "speech": "фамИлия"}, {"display": "Февраль", "speech": "феврАль"}, {"display": "Хорошо", "speech": "хорошО"}, {"display": "Чемодан", "speech": "чемодАн"}, {"display": "Червяк", "speech": "червЯк"}, {"display": "Чувствовать", "speech": "чУвствовать"}, {"display": "Шёл", "speech": "шЁл"}, {"display": "Щавель", "speech": "щавЕль"}, {"display": "Яблоко", "speech": "Яблоко"}, {"display": "Яблоня", "speech": "Яблоня"}, {"display": "Ягода", "speech": "Ягода"}, {"display": "Январь", "speech": "янвАрь"}];
+        let isRunning = false;
+        const audio = new Audio();
+
+        function activateVoice() {
+            speak("Голос готов");
+            document.getElementById('unlock-btn').style.display = 'none';
+            document.getElementById('ui').style.display = 'block';
+        }
+
+        function speak(text) {
+            if (!text) return;
+            // Используем стабильный Google TTS API
+            audio.src = "https://translate.google.com/translate_tts?ie=UTF-8&tl=ru-RU&client=tw-ob&q=" + encodeURIComponent(text);
+            audio.play().catch(e => console.error(e));
+        }
+
+        function startDictation() {
+            if (isRunning) return;
+            isRunning = true;
+            const q = [...vocab].sort(() => Math.random() - 0.5);
+            let idx = 0; let results = [];
+            document.getElementById('start-btn').style.display = 'none';
+            const next = () => {
+                if (idx < q.length) {
+                    const it = q[idx]; results.push(it.display);
+                    document.getElementById('word-display').innerText = "👂 Слушай...";
+                    speak(it.speech); idx++;
+                    setTimeout(next, parseInt(document.getElementById('gap').value) * 1000);
+                } else {
+                    isRunning = false;
+                    document.getElementById('word-display').innerText = "КОНЕЦ! 🎉";
+                    document.getElementById('res').style.display = 'block';
+                    document.getElementById('final-list').innerHTML = results.map(w => `<li>${w}</li>`).join('');
+                }
+            };
+            next();
+        }
+    </script>
+</body>
+</html>
